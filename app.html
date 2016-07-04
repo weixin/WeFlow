@@ -8,95 +8,103 @@
 
     <script type="text/javascript">
 
-        window.nodeRequire = require;
-        delete window.require;
-        delete window.exports;
-        delete window.module;
+//        window.nodeRequire = require;
+//        delete window.require;
+//        delete window.exports;
+//        delete window.module;
 
         // Pretend that cookies work
-        (function (document) {
-            var cookies = {};
-            document.__defineGetter__('cookie', function () {
-                var output = [];
-                for (var cookieName in cookies) {
-                    output.push(cookieName + "=" + cookies[cookieName]);
-                }
-                return output.join(";");
-            });
-            document.__defineSetter__('cookie', function (s) {
-                var indexOfSeparator = s.indexOf("=");
-                var key = s.substr(0, indexOfSeparator);
-                var value = s.substring(indexOfSeparator + 1);
-                cookies[key] = value;
-                return key + "=" + value;
-            });
-            document.clearCookies = function () {
-                cookies = {};
-            };
+//        (function (document) {
+//            var cookies = {};
+//            document.__defineGetter__('cookie', function () {
+//                var output = [];
+//                for (var cookieName in cookies) {
+//                    output.push(cookieName + "=" + cookies[cookieName]);
+//                }
+//                return output.join(";");
+//            });
+//            document.__defineSetter__('cookie', function (s) {
+//                var indexOfSeparator = s.indexOf("=");
+//                var key = s.substr(0, indexOfSeparator);
+//                var value = s.substring(indexOfSeparator + 1);
+//                cookies[key] = value;
+//                return key + "=" + value;
+//            });
+//            document.clearCookies = function () {
+//                cookies = {};
+//            };
+//
+//            originalLocation = document.location;
+//            // Pretend that we're hosted on an Internet Website
+//            document.__defineGetter__('location', function () {
+//                return {
+//                    href: 'http://weflow.app/',
+//                    protocol: 'http:',
+//                    host: 'weflow.app',
+//                    port: '',
+//                    pathname: '/',
+//                    search: '',
+//                    hash: '',
+//                    username: '',
+//                    password: '',
+//                    origin: 'http://weflow.app',
+//                    reload: function () {
+//                        return originalLocation.reload.apply(originalLocation, arguments);
+//                    }
+//                };
+//            });
+//
+//            // Nobody sets location
+//            document.__defineSetter__('location', function () {
+//            })
+//        })(document);
 
-            originalLocation = document.location;
-            // Pretend that we're hosted on an Internet Website
-            document.__defineGetter__('location', function () {
-                return {
-                    href: 'http://weflow.app/',
-                    protocol: 'http:',
-                    host: 'weflow.app',
-                    port: '',
-                    pathname: '/',
-                    search: '',
-                    hash: '',
-                    username: '',
-                    password: '',
-                    origin: 'http://weflow.app',
-                    reload: function () {
-                        return originalLocation.reload.apply(originalLocation, arguments);
-                    }
-                };
-            });
-
-            // Nobody sets location
-            document.__defineSetter__('location', function () {
-            })
-        })(document);
-
-        (function (i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function () {
-                        (i[r].q = i[r].q || []).push(arguments)
-                    }, i[r].l = 1 * new Date();
-            a = s.createElement(o),
-                    m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', 'https://o4jiepyc4.qnssl.com/analytics.js', 'ga');
+//        (function (i, s, o, g, r, a, m) {
+//            i['GoogleAnalyticsObject'] = r;
+//            i[r] = i[r] || function () {
+//                        (i[r].q = i[r].q || []).push(arguments)
+//                    }, i[r].l = 1 * new Date();
+//            a = s.createElement(o),
+//                    m = s.getElementsByTagName(o)[0];
+//            a.async = 1;
+//            a.src = g;
+//            m.parentNode.insertBefore(a, m)
+//        })(window, document, 'script', 'https://o4jiepyc4.qnssl.com/analytics.js', 'ga');
         // qiniu CDN for speeding up ga.js -> https://www.google-analytics.com/analytics.js
 
         // Get using version of WeFlow
-        var version = nodeRequire('./package.json').version;
+//        var version = nodeRequire('./package.json').version;
 
-        ga('create', 'UA-24431632-7', 'auto');
-        ga('set', 'checkProtocolTask', null); // Disable file protocol checking.
-        ga('set', 'location', '/app.html'); // Allow file:// request for GA
-        ga('set', 'dimension1', version);
-        ga('send', 'event', 'Version', 'update', version);
-        ga('send', 'pageview');
+//        ga('create', 'UA-24431632-7', 'auto');
+//        ga('set', 'checkProtocolTask', null); // Disable file protocol checking.
+//        ga('set', 'location', '/app.html'); // Allow file:// request for GA
+//        ga('set', 'dimension1', version);
+//        ga('send', 'event', 'Version', 'update', version);
+//        ga('send', 'pageview');
 
     </script>
 </head>
 <body>
-<div class="wraper">
-    <div class="welcome hide" id="js-welcome">
-        <div class="logo"></div>
-        <div class="title">WeFlow</div>
-        <div class="subtitle">子在川上曰：逝者如斯夫，不舍昼夜。</div>
-        <div class="welcome-example" id="js-example">导入示例项目</div>
-        <div class="tips">
-            <div class="icon-tips"></div>
-            <div class="tips__content">添加一个空项目</div>
-        </div>
+<div class="header">
+    WeFlow
+    <div class="option">
+        <a id="js-mini-button" href="javascript:;" class="mini"></a>
+        <a id="js-close-button" href="javascript:;" class="close"></a>
     </div>
-    <div class="projects">
+</div>
+<div class="welcome" id="js-welcome">
+    <div class="logo"></div>
+    <div class="title">WeFlow</div>
+    <div class="subtitle">子在川上曰：逝者如斯夫，不舍昼夜。</div>
+    <div class="welcome-example" id="js-example">导入示例项目</div>
+    <div class="tips hide" id="js-tip">
+        <div class="icon-tips"></div>
+        <div class="tips__content">添加一个空项目</div>
+    </div>
+</div>
+
+<div class="wraper">
+    <div class="projects" id="js-projects">
         <div class="projects__header">
             Projects
         </div>
@@ -104,33 +112,34 @@
 
         </ul>
     </div>
-    <div class="bottom-fixed">
+    <div class="bottom-fixed" id="js-bottom">
         <div class="tasks" id="js-tasks">
             <span data-task="dev" id="js-build-dev" class="tasks__button">开发</span>
-            <span data-task="dist" class="tasks__button">生产编译</span>
-            <span data-task="ftp" class="tasks__button">FTP 部署</span>
-            <span data-task="zip" class="tasks__button">Zip 打包</span>
+            <span data-task="dist" class="tasks__button">编译</span>
+            <span data-task="ftp" class="tasks__button">上传</span>
+            <span data-task="zip" class="tasks__button">打包</span>
         </div>
         <div class="logs" id="js-log">
-            <span class="icon icon-clean" id="js-clean-log"></span>
+            <span class="icon icon-clean" id="js-clean-log" title="清除日志"></span>
             <div class="logs__inner">
 
             </div>
         </div>
     </div>
-    <div class="bottom-bar">
-        <span class="icon icon-add" id="js-new-project" title="新建项目"></span>
-        <span class="icon icon-del" id="js-del-project" title="删除项目"></span>
+
+</div>
+<div class="bottom-bar">
+    <span class="icon icon-add" id="js-new-project" title="新建项目"></span>
+    <span class="icon icon-del" id="js-del-project" title="删除项目"></span>
         <span class="icon icon-open" title="打开项目">
             <input class="bottom-bar__open" id="js-open-project" type="file" webkitdirectory multiple>
         </span>
-        <span class="icon icon-setting" id="js-setting-button" title="全局设置"></span>
-        <span class="icon icon-log" id="js-log-button" title="查看日志"></span>
+    <span class="icon icon-setting" id="js-setting-button" title="全局设置"></span>
+    <span class="icon icon-info projects__info" id="js-about-button" title="关于"></span>
+    <span class="icon icon-log" id="js-log-button" title="查看日志"></span>
 
-        <span class="bottom-bar__status" id="js-logs-status"></span>
-    </div>
+    <span class="bottom-bar__status" id="js-logs-status"></span>
 </div>
-
 <div class="setting hide" id="js-setting">
     <a href="javascript:;" id="js-setting-close" class="icon icon-close"></a>
     <a href="https://github.com/weixin/weflow" id="js-help" class="icon icon-help"></a>
@@ -171,16 +180,20 @@
     </div>
 
     <div class="setting__section">
-        <div class="setting__hd">FTP 配置</div>
+        <div class="setting__hd">设置</div>
         <div class="setting__bd">
-            <label class="setting__subtitle">FTP配置</label>
-            <div class="ui-text">
+            <label class="setting__subtitle">上传配置(默认为 FTP)</label>
+            <div class="ui-text ui-text_short">
                 <input type="text" name="ftp-host" placeholder="服务器地址" value="">
             </div>
-            <div class="ui-text">
+            <div class="ui-checkbox sftp">
+                <input type="checkbox" name="ftp-ssh" id="sftp">
+                <label for="sftp">使用 SFTP</label>
+            </div>
+            <div class="ui-text ui-text_short">
                 <input type="text" name="ftp-user" placeholder="用户名" value="">
             </div>
-            <div class="ui-text">
+            <div class="ui-text ui-text_short">
                 <input type="password" name="ftp-pass" placeholder="密码" value="">
             </div>
             <div class="ui-text">
@@ -213,14 +226,16 @@
         </div>
     </div>
 
-    <a href="javascript:;" class="icon icon-close"></a>
+    <a href="javascript:;" id="js-about-close" class="icon icon-close"></a>
 
 </div>
 
 
-<script src="./assets/js/jquery.min.js"></script>
+<!--<script src="./assets/js/jquery.min.js"></script>-->
 <script src="./src/app.js"></script>
-<script src="./src/menu.js"></script>
-<script type="text/javascript" src="http://pingjs.qq.com/h5/stats.js" name="MTAH5" sid="500140708"></script>
+<!--<script src="./src/menu.js"></script>-->
+<!--<script type="text/javascript" src="http://pingjs.qq.com/h5/stats.js" name="MTAH5" sid="500140708"></script>-->
+
+
 </body>
 </html>

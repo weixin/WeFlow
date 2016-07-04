@@ -18,10 +18,11 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 360,
-        minHeight: 572,
+        height: 572,
         resizable: false,
         title: 'WeFlow',
-        icon: logo
+        icon: logo,
+				frame: false
     });
 
     // and load the index.html of the app.
@@ -76,6 +77,14 @@ app.on('activate', function () {
     app.show();
 });
 
+/*注册事件*/
+ipc.on('mini', function (event) {
+	mainWindow.minimize();
+});
+
+ipc.on('close', function (event) {
+	app.quit();
+});
 //检查更新
 ipc.on('checkForUpdate', function (event, status) {
     let options = {};

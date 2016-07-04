@@ -25,6 +25,7 @@ const posthtml = require('gulp-posthtml');
 const posthtmlPx2rem = require('posthtml-px2rem');
 const RevAll = require('gulp-rev-all');   // reversion
 const revDel = require('gulp-rev-delete-original');
+const sass = require('gulp-sass');
 const Common = require(path.join(__dirname, '../common'));
 
 let webp = require(path.join(__dirname, './common/webp'));
@@ -35,16 +36,16 @@ function dist(projectPath, log, callback) {
     let projectConfigPath = path.join(projectPath, 'weflow.config.json');
     let config = null;
 
-    if(Common.fileExist(projectConfigPath)){
+    if (Common.fileExist(projectConfigPath)) {
         config = Common.requireUncached(projectConfigPath);
-    }else{
+    } else {
         config = Common.requireUncached(path.join(__dirname, '../../weflow.config.json'));
     }
 
     let lazyDir = config.lazyDir || ['../slice'];
 
-    if(Common.PLATFORM === 'win32'){
-        for(let i = 0; i < lazyDir.length; i++){
+    if (Common.PLATFORM === 'win32') {
+        for (let i = 0; i < lazyDir.length; i++) {
             lazyDir[i] = lazyDir[i].replace(/\//g, '\\');
         }
     }
@@ -74,7 +75,7 @@ function dist(projectPath, log, callback) {
             js: path.join(projectPath, './src/js/**/*.js'),
             media: path.join(projectPath, './src/media/**/*'),
             less: path.join(projectPath, './src/css/style-*.less'),
-            lessAll: path.join(projectPath, './src/css/**/*.less'),
+            sass: path.join(projectPath, './src/css/style-*.scss'),
             html: [path.join(projectPath, './src/html/**/*.html'), path.join(projectPath, '!./src/html/_*/**.html')],
             htmlAll: path.join(projectPath, './src/html/**/*')
         },
@@ -104,21 +105,46 @@ function dist(projectPath, log, callback) {
         })
     }
 
-    function condition(file){
+    function condition(file) {
         return path.extname(file.path) === '.png';
     }
 
     //编译 less
     function compileLess(cb) {
         gulp.src(paths.src.less)
-            .pipe(less())
+            .pipe(less({relativeUrls: true}))
+            .on('error', function (error) {
+                console.log(error.message);
+                log(error.message);
+            })
             .pipe(lazyImageCSS({imagePath: lazyDir}))
             .pipe(tmtsprite({margin: 4}))
             .pipe(gulpif(condition, gulp.dest(paths.tmp.sprite), gulp.dest(paths.tmp.css)))
-            .on('data', function(){})
+            .on('data', function () {
+            })
             .on('end', function () {
                 console.log('compileLess success.');
                 log('compileLess success.');
+                cb && cb();
+            })
+    }
+
+    //编译 sass
+    function compileSass(cb) {
+        gulp.src(paths.src.sass)
+            .pipe(sass())
+            .on('error', function (error) {
+                console.log(error.message);
+                log(error.message);
+            })
+            .pipe(lazyImageCSS({imagePath: lazyDir}))
+            .pipe(tmtsprite({margin: 4}))
+            .pipe(gulpif(condition, gulp.dest(paths.tmp.sprite), gulp.dest(paths.tmp.css)))
+            .on('data', function () {
+            })
+            .on('end', function () {
+                console.log('compileSass success.');
+                log('compileSass success.');
                 cb && cb();
             })
     }
@@ -334,11 +360,14 @@ function dist(projectPath, log, callback) {
          * 先删除目标目录,保证最新
          * @param next
          */
-        function (next) {
+            function (next) {
             delDist(next);
         },
         function (next) {
             compileLess(next);
+        },
+        function (next) {
+            compileSass(next);
         },
         function (next) {
             compileAutoprefixer(next);
@@ -374,7 +403,7 @@ function dist(projectPath, log, callback) {
         function (next) {
             reversion(next);
         },
-        function(next){
+        function (next) {
             supportWebp(next);
         },
         function (next) {

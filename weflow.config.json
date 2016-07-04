@@ -1,18 +1,19 @@
 {
-  "ftp": {
-    "host": "",
-    "port": "",
-    "user": "",
-    "pass": "",
-    "remotePath": "",
-    "includeHtml": true
-},
-  "livereload": true,
-  "lazyDir": [
-      "../slice"
-  ],
-  "supportREM": false,
-  "supportWebp": false,
-  "supportChanged": false,
-  "reversion": false
+    "ftp": {
+        "host": "",
+        "port": "",
+        "user": "",
+        "pass": "",
+        "remotePath": "",
+        "includeHtml": true,
+        "ssh": false
+    },
+    "livereload": true,
+    "lazyDir": [
+        "../slice"
+    ],
+    "supportREM": true,
+    "supportWebp": false,
+    "supportChanged": false,
+    "reversion": false
 }

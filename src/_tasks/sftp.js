@@ -5,7 +5,7 @@ const async = require('async');
 const gulp = require('gulp');
 const _ = require('lodash');
 const del = require('del');
-const ftp = require('gulp-ftp');
+const sftp = require('gulp-sftp');
 const util = require('./lib/util');
 const Common = require(path.join(__dirname, '../common'));
 
@@ -20,10 +20,10 @@ module.exports = function (projectPath, log, callback) {
         config = Common.requireUncached(path.join(__dirname, '../../weflow.config.json'));
     }
 
-    let configFTP = config.ftp;
+    let configSFTP = config.ftp;
 
-    if (configFTP.host === '' || configFTP.port === '' || configFTP.user === '') {
-        callback('ftp config');
+    if (configSFTP.host === '' || configSFTP.port === '' || configSFTP.user === '') {
+        callback('sftp config');
         return;
     }
 
@@ -36,26 +36,26 @@ module.exports = function (projectPath, log, callback) {
         })
     }
 
-    function remoteFtp(cb) {
-        let remotePath = config['ftp']['remotePath'] || "";
-        let ftpConfig = _.extend(config['ftp'], {
+    function remoteSftp(cb) {
+        let remotePath = config['sftp']['remotePath'] || "";
+        let sftpConfig = _.extend(config['sftp'], {
             remotePath: path.join(remotePath, projectName)
         });
-        let distPath = config['ftp']['includeHtml'] ? path.join(projectPath, './dist/**/*') : [path.join(projectPath, './dist/**/*'), path.join(projectPath, '!./dist/html/**/*.html')];
+        let distPath = config['sftp']['includeHtml'] ? path.join(projectPath, './dist/**/*') : [path.join(projectPath, './dist/**/*'), path.join(projectPath, '!./dist/html/**/*.html')];
 
 
         gulp.src(distPath, {base: '.'})
-            .pipe(ftp(ftpConfig))
+            .pipe(sftp(sftpConfig))
             .on('end', function () {
-                console.log('ftp success.');
-                log('ftp success.');
+                console.log('sftp success.');
+                log('sftp success.');
                 cb && cb();
             });
     }
 
     async.series([
         function (next) {
-            remoteFtp(next);
+            remoteSftp(next);
         }
     ], function (err) {
         if (err) {

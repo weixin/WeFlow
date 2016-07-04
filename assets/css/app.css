@@ -1,15 +1,26 @@
 html, body {
-    width: 360px;
+    width: 100%;
     min-height: 572px;
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
+body {
+    padding-top: 30px;
+}
+
+input, span, label {
+    -webkit-user-select: none;
+}
+
 .wraper {
-    position: relative;
-    width: 360px;
-    min-height: 572px;
+    position: absolute;
+    width: 100%;
     overflow: hidden;
+    bottom: 26px;
+    top: 30px;
+    display: flex;
+    flex-direction: column;
 }
 
 .hide {
@@ -111,16 +122,58 @@ html, body {
     background-size: 15px 15px;
 }
 
+/**
+    自定义头部
+*/
+.header {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    height: 30px;
+    font-size: 14px;
+    line-height: 30px;
+    /*background-color: aliceblue;*/
+    z-index: 100;
+    text-align: center;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+}
+
+.option {
+    position: absolute;
+    right: 5px;
+    top: 2px;
+    display: inline-block;
+}
+
+.option a {
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    margin-right: 2px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+}
+
+.option .close {
+    background-color: #ff5858;
+}
+
+.option .mini {
+    background-color: #58d65b;
+}
+
 /*
     欢迎页
 */
 .welcome {
-    position: fixed;
+    position: absolute;
     left: 0;
-    top: 0;
+    top: 30px;
     z-index: 9;
     width: 100%;
-    height: 100%;
+    bottom: 26px;
     background-color: #fff;
     padding-top: 100px;
 }
@@ -228,7 +281,7 @@ html, body {
     底部工具栏
 */
 .bottom-bar {
-    position: fixed;
+    position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;
@@ -289,7 +342,8 @@ html, body {
     项目列表
 */
 .projects {
-
+    flex: 1;
+    position: relative;
 }
 
 .projects__header {
@@ -303,14 +357,14 @@ html, body {
 }
 
 .projects__list {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    top: 40px;
     overflow-y: auto;
-    height: 438px;
     -webkit-user-select: none;
 }
 
-.projects__list_high {
-    padding-bottom: 100px;
-}
 
 .projects__list-item {
     position: relative;
@@ -319,6 +373,7 @@ html, body {
     width: 100%;
     height: 50px;
     padding: 0 10px 0 26px;
+    cursor: default;
 }
 
 .projects__list-item:hover {
@@ -343,7 +398,7 @@ html, body {
     position: absolute;
     left: 0;
     top: 0;
-    width: 2px;
+    width: 5px;
     height: 100%;
     background-color: #54D560;
 }
@@ -391,7 +446,6 @@ html, body {
 }
 
 .projects__path {
-    display: none;
     font-size: 8px;
     color: #808080;
     margin-top: 3px;
@@ -409,8 +463,7 @@ html, body {
     transform: translateY(-50%);
 }
 
-.projects__list-item_current .icon-info,
-.projects__list-item_current .projects__path {
+.projects__list-item_current .icon-info {
     display: block;
 }
 
@@ -418,10 +471,6 @@ html, body {
     bottom-fixed
 */
 .bottom-fixed {
-    position: fixed;
-    left: 0;
-    bottom: 26px;
-    width: 100%;
     background-color: rgba(255, 255, 255, .9);
 }
 
@@ -570,12 +619,12 @@ html, body {
 }
 
 .setting {
-    position: fixed;
+    position: absolute;
     left: 0;
-    top: 0;
+    top: 30px;
     z-index: 9;
     width: 100%;
-    height: 552px;
+    bottom: 26px;
     background-color: rgba(255, 255, 255, .9);
     -webkit-backdrop-filter: brightness(1.5) blur(15px);
     overflow: auto;
@@ -594,6 +643,7 @@ html, body {
 }
 
 .setting__bd {
+    position: relative;
     padding: 0 15px;
 }
 
@@ -613,6 +663,15 @@ input:focus {
     padding: 0 1px;
 }
 
+.ui-text_short{
+    width: 179px;
+}
+
+.sftp{
+    position: absolute;
+    left: 211px;
+    top: 29px;
+}
 .ui-text input {
     position: relative;
     z-index: 1;
@@ -728,15 +787,15 @@ input:focus {
 .about {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 30px;
     z-index: 9;
     width: 100%;
-    height: 100%;
+    bottom: 26px;
     background-color: rgba(255, 255, 255, .95);
+    padding-top: 100px;
 }
 
 .about .logo {
-    margin-top: 30px;
     animation: none;
     transform: translate(0, 0);
     opacity: 1;
@@ -856,4 +915,47 @@ input:focus {
     }
 }
 
+.alert_mask {
+    position: absolute;
+    top: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    z-index: 9;
+}
 
+.alert_box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    min-height: 120px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 14px;
+    -webkit-user-select: none;
+}
+
+.alert_top {
+    height: 26px;
+    padding-top: 2px;
+    padding-left: 8px;
+    background-color: #fafafa;
+}
+
+.alert_content {
+    margin: 20px 10px;
+}
+
+.alert_bottom {
+    text-align: right;
+    margin-bottom: 9px;
+}
+
+.alert_bottom .tasks__button {
+    right: 10px;
+    display: inline-block;
+}

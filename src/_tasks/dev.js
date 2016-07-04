@@ -6,10 +6,10 @@ const ejshelper = require('tmt-ejs-helper');
 const async = require('async');
 const gulp = require('gulp');
 const less = require('gulp-less');
-const gulpif = require('gulp-if');
 const lazyImageCSS = require('gulp-lazyimagecss');  // 自动为图片样式添加 宽/高/background-size 属性
 const postcss = require('gulp-postcss');   // CSS 预处理
 const posthtml = require('gulp-posthtml');  // HTML 预处理
+const sass = require('gulp-sass');
 const Common = require(path.join(__dirname, '../common.js'));
 
 function dev(projectPath, log, callback) {
@@ -43,6 +43,8 @@ function dev(projectPath, log, callback) {
             media: path.join(projectPath, './src/media/**/*'),
             less: [path.join(projectPath, './src/css/style-*.less'), path.join(projectPath, './src/css/**/*.css')],
             lessAll: path.join(projectPath, './src/css/**/*.less'),
+            sass: path.join(projectPath, './src/css/style-*.scss'),
+            sassAll: path.join(projectPath, './src/css/**/*.scss'),
             html: [path.join(projectPath, './src/html/**/*.html'), path.join(projectPath, '!./src/html/_*/**/**.html')],
             htmlAll: path.join(projectPath, './src/html/**/*.html')
         },
@@ -76,7 +78,7 @@ function dev(projectPath, log, callback) {
 
     function compileLess(cb) {
         gulp.src(paths.src.less)
-            .pipe(less())
+            .pipe(less({relativeUrls: true}))
             .on('error', function (error) {
                 console.log(error.message);
             })
@@ -93,7 +95,30 @@ function dev(projectPath, log, callback) {
                     reloadHandler();
                 }
             })
-    };
+    }
+
+    //编译 sass
+    function compileSass(cb) {
+        gulp.src(paths.src.sass)
+            .pipe(sass())
+            .on('error', function(error){
+                console.log(error.message);
+                log(error.message);
+            })
+            .pipe(lazyImageCSS({imagePath: lazyDir}))
+            .pipe(gulp.dest(paths.dev.css))
+            .on('data', function () {
+            })
+            .on('end', function () {
+                if (cb) {
+                    console.log('compile Sass success.');
+                    log('compile Sass success.');
+                    cb();
+                } else {
+                    reloadHandler();
+                }
+            })
+    }
 
     //编译 html
     function compileHtml(cb) {
@@ -124,6 +149,7 @@ function dev(projectPath, log, callback) {
                 paths.src.js,
                 paths.src.media,
                 paths.src.lessAll,
+                paths.src.sassAll,
                 paths.src.htmlAll
             ],
             {ignored: /[\/\\]\./}
@@ -201,11 +227,17 @@ function dev(projectPath, log, callback) {
 
             case 'css':
 
+                var ext = path.extname(file);
+
                 if (type === 'removed') {
                     var tmp = file.replace(/src/, 'dev').replace('.less', '.css');
                     del([tmp], {force: true});
                 } else {
-                    compileLess();
+                    if (ext === '.less') {
+                        compileLess();
+                    } else {
+                        compileSass();
+                    }
                 }
 
                 break;
@@ -289,6 +321,9 @@ function dev(projectPath, log, callback) {
                 },
                 function (cb) {
                     compileLess(cb);
+                },
+                function (cb) {
+                    compileSass(cb);
                 },
                 function (cb) {
                     compileHtml(cb);

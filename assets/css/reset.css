@@ -431,3 +431,22 @@ ul, li{
     margin: 0;
     padding: 0;
 }
+
+::-webkit-scrollbar {
+    height: 7px;
+    width: 7px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
