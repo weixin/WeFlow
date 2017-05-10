@@ -11,7 +11,7 @@ const gulpif = require('gulp-if');
 const less = require('gulp-less');
 const util = require(path.join(__dirname, './lib/util'));
 const uglify = require('gulp-uglify');
-const usemin = require('gulp-usemin');
+const useref = require('gulp-useref');
 const lazyImageCSS = require('gulp-lazyimagecss');  // 自动为图片样式添加 宽/高/background-size 属性
 const minifyCSS = require('gulp-cssnano');
 const imagemin = require('weflow-imagemin');
@@ -26,6 +26,16 @@ const posthtmlPx2rem = require('posthtml-px2rem');
 const RevAll = require('weflow-rev-all');   // reversion
 const revDel = require('gulp-rev-delete-original');
 const sass = require('gulp-sass');
+
+//svg转换用到的组件
+var rename = require('gulp-rename');
+var svgmin = require('gulp-svgmin');
+var svgInline = require('gulp-svg-inline');
+var replace = require('gulp-replace');
+var parseSVG = require('./common/parseSVG');
+var svgToPng = require('./common/svgToPng');
+var svgSymbol = require('gulp-svg-sprite');
+
 const Common = require(path.join(__dirname, '../common'));
 
 let webp = require(path.join(__dirname, './common/webp'));
@@ -82,7 +92,10 @@ function dist(projectPath, log, callback) {
             html: path.join(projectPath, './tmp/html'),
             js: path.join(projectPath, './tmp/js'),
             sprite: path.join(projectPath, './tmp/sprite'),
-            spriteAll: path.join(projectPath, './tmp/sprite/**/*')
+            spriteAll: path.join(projectPath, './tmp/sprite/**/*'),
+            svg: path.join(projectPath, './tmp/img'),
+            symboltemp: path.join(projectPath, './tmp/symboltemp/'),
+            symbol: path.join(projectPath, './tmp/symbolsvg')
         },
         dist: {
             dir: path.join(projectPath, './dist'),
@@ -100,6 +113,11 @@ function dist(projectPath, log, callback) {
         })
     }
 
+    // 清除 svg 过渡目录
+    function delSVG() {
+        return del([paths.tmp.symboltemp]);
+    }
+
     function condition(file) {
         return path.extname(file.path) === '.png';
     }
@@ -112,7 +130,7 @@ function dist(projectPath, log, callback) {
                 console.log(error.message);
                 log(error.message);
             })
-            .pipe(lazyImageCSS({imagePath: lazyDir}))
+            .pipe(lazyImageCSS({imagePath: lazyDir, SVGGracefulDegradation:config.SVGGracefulDegradation}))
             .pipe(tmtsprite({margin: 4}))
             .pipe(gulpif(condition, gulp.dest(paths.tmp.sprite), gulp.dest(paths.tmp.css)))
             .on('data', function () {
@@ -239,7 +257,7 @@ function dist(projectPath, log, callback) {
                 ))
             )
             .pipe(gulp.dest(paths.tmp.html))
-            .pipe(usemin())
+            .pipe(useref())
             .pipe(gulp.dest(paths.tmp.html))
             .on('end', function () {
                 console.log('compileHtml success.');
