@@ -167,6 +167,10 @@
                 <input type="checkbox" name="supportChanged" id="supportChanged">
                 <label for="supportChanged">开启 文件变动增量编译支持</label>
             </div>
+            <div class="ui-checkbox">
+                <input type="checkbox" name="SVGGracefulDegradation" id="SVGGracefulDegradation">
+                <label for="SVGGracefulDegradation">开启 SVG 降级，兼容不支持 svg 的浏览器</label>
+            </div>
         </div>
     </div>
 
@@ -186,6 +190,9 @@
             </div>
             <div class="ui-text ui-text_short">
                 <input type="password" name="ftp-pass" placeholder="密码" value="">
+            </div>
+            <div class="ui-text ui-text_short">
+                <input type="text" name="ftp-port" placeholder="端口" value="">
             </div>
             <div class="ui-text">
                 <input type="text" name="ftp-remotePath" placeholder="远程路径" value="">

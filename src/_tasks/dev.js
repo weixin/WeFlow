@@ -10,6 +10,10 @@ const lazyImageCSS = require('gulp-lazyimagecss');  // 自动为图片样式添�
 const postcss = require('gulp-postcss');   // CSS 预处理
 const posthtml = require('gulp-posthtml');  // HTML 预处理
 const sass = require('gulp-sass');
+const svgSymbol = require('gulp-svg-sprite');
+const rename = require('gulp-rename');
+const parseSVG = require(path.join(__dirname, './common/parseSVG.js'));
+const babel = require('gulp-babel');  //es6
 const Common = require(path.join(__dirname, '../common.js'));
 
 function dev(projectPath, log, callback) {
@@ -25,7 +29,7 @@ function dev(projectPath, log, callback) {
         config = Common.requireUncached(path.join(__dirname, '../../weflow.config.json'));
     }
 
-    let lazyDir = config.lazyDir || ['../slice'];
+    let lazyDir = config.lazyDir || ['../slice', '../svg'];
 
     let paths = {
         src: {
@@ -39,13 +43,16 @@ function dev(projectPath, log, callback) {
             sass: path.join(projectPath, './src/css/style-*.scss'),
             sassAll: path.join(projectPath, './src/css/**/*.scss'),
             html: [path.join(projectPath, './src/html/**/*.html'), path.join(projectPath, '!./src/html/_*/**/**.html')],
-            htmlAll: path.join(projectPath, './src/html/**/*.html')
+            htmlAll: path.join(projectPath, './src/html/**/*.html'),
+            svg:[path.join(projectPath, './src/svg/**/*.svg')]
         },
         dev: {
             dir: path.join(projectPath, './dev'),
             css: path.join(projectPath, './dev/css'),
             html: path.join(projectPath, './dev/html'),
-            js: path.join(projectPath, './dev/js')
+            js: path.join(projectPath, './dev/js'),
+            symboltemp: path.join(projectPath, './dev/symboltemp'),
+            symbol: path.join(projectPath, './dev/symbolsvg')
         }
     };
 
@@ -76,7 +83,7 @@ function dev(projectPath, log, callback) {
             .on('error', function (error) {
                 console.log(error.message);
             })
-            .pipe(lazyImageCSS({imagePath: lazyDir}))
+            .pipe(lazyImageCSS({imagePath: lazyDir, SVGGracefulDegradation: false}))
             .pipe(gulp.dest(paths.dev.css))
             .on('data', function () {
             })
@@ -99,7 +106,7 @@ function dev(projectPath, log, callback) {
                 console.log(error.message);
                 log(error.message);
             })
-            .pipe(lazyImageCSS({imagePath: lazyDir}))
+            .pipe(lazyImageCSS({imagePath: lazyDir, SVGGracefulDegradation: false}))
             .pipe(gulp.dest(paths.dev.css))
             .on('data', function () {
             })
@@ -121,6 +128,7 @@ function dev(projectPath, log, callback) {
                 console.log(error.message);
                 log(error.message);
             }))
+            .pipe(parseSVG({devPath: projectPath + '/dev'}))
             .pipe(gulp.dest(paths.dev.html))
             .on('data', function () {
             })
@@ -135,6 +143,48 @@ function dev(projectPath, log, callback) {
             })
     }
 
+    //编译 JS
+    function compileJs(cb) {
+        return gulp.src(paths.src.js)
+            .pipe(babel({
+                presets: ["babel-preset-es2015", "babel-preset-stage-2"].map(require.resolve)
+            }))
+            .pipe(gulp.dest(paths.dev.js))
+            .on('end', function () {
+                console.log('compileJs success.');
+                log('compileJs success.');
+                cb && cb();
+            });
+    }
+
+    function svgSymbols(cb){
+        return gulp.src(paths.dev.symboltemp + '**/*.svg')
+            .pipe(svgSymbol({
+                mode:{
+                    inline:true,
+                    symbol:true
+                },
+                shape:{
+                    id:{
+                        generator:function(id){
+                            var ids = id.replace(/.svg/ig,'').replace(/symboltemp[\/\\]/, '');
+                            return ids;
+                        }
+                    }
+                }
+            }))
+            .pipe(rename(function (path){
+                path.dirname = './';
+                path.basename = 'symbol';
+            }))
+            .pipe(gulp.dest(paths.dev.symbol))
+            .on('end', function () {
+                console.log('svgSymbols success.');
+                log('svgSymbols success.');
+                cb && cb();
+            });
+    }
+
     //监听文件
     function watch(cb) {
         var watcher = gulp.watch([
@@ -144,7 +194,8 @@ function dev(projectPath, log, callback) {
                 paths.src.media,
                 paths.src.lessAll,
                 paths.src.sassAll,
-                paths.src.htmlAll
+                paths.src.htmlAll,
+                paths.src.svg
             ],
             {ignored: /[\/\\]\./}
         );
@@ -246,6 +297,28 @@ function dev(projectPath, log, callback) {
                 }
 
                 break;
+
+            case 'svg':
+                if (type === 'removed') {
+                    var tmp = file.replace(/src/, 'dev');
+                    del([tmp], {force: true}).then(function () {
+                    });
+                } else {
+                    copyHandler('svg', file);
+                    if (ext === '.less') {
+                        compileLess();
+                    } else {
+                        compileSass();
+                    }
+                    compileHtml();
+                    setTimeout(function(){
+                        svgSymbols();
+                        setTimeout(function(){
+                            reloadHandler();
+                        },300)
+                    },300)
+                }
+                break;
         }
 
     };
@@ -314,13 +387,13 @@ function dev(projectPath, log, callback) {
                     copyHandler('media', cb);
                 },
                 function (cb) {
+                    copyHandler('svg', cb);
+                },
+                function (cb) {
                     compileLess(cb);
                 },
                 function (cb) {
                     compileSass(cb);
-                },
-                function (cb) {
-                    compileHtml(cb);
                 }
             ], function (error) {
                 if (error) {
@@ -329,6 +402,12 @@ function dev(projectPath, log, callback) {
 
                 next();
             })
+        },
+        function (next) {
+            compileHtml(next);
+        },
+        function (next) {
+            svgSymbols(next);
         },
         function (next) {
             watch(next);

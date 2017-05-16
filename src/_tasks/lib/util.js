@@ -12,7 +12,39 @@ var tmt_util = {
     task_log: function (task_name) {
         this.log(util.colors.magenta(task_name), util.colors.green.bold('√'));
     },
-    colors: util.colors
+    colors: util.colors,
+    dirExist: function (dirPath) {
+        try {
+            var stat = fs.statSync(dirPath);
+            if (stat.isDirectory()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            if (err.code === 'ENOENT') {
+                return false;
+            } else {
+                throw new Error(err);
+            }
+        }
+    },
+    fileExist: function (filePath) {
+        try {
+            var stat = fs.statSync(filePath);
+            if (stat.isFile()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            if (err.code === 'ENOENT') {
+                return false;
+            } else {
+                throw new Error(err);
+            }
+        }
+    }
 };
 
 module.exports = tmt_util;

@@ -28,13 +28,16 @@ const revDel = require('gulp-rev-delete-original');
 const sass = require('gulp-sass');
 
 //svg转换用到的组件
-var rename = require('gulp-rename');
-var svgmin = require('gulp-svgmin');
-var svgInline = require('gulp-svg-inline');
-var replace = require('gulp-replace');
-var parseSVG = require('./common/parseSVG');
-var svgToPng = require('./common/svgToPng');
-var svgSymbol = require('gulp-svg-sprite');
+const rename = require('gulp-rename');
+const svgmin = require('gulp-svgmin');
+const svgInline = require('gulp-svg-inline');
+const replace = require('gulp-replace');
+const parseSVG = require(path.join(__dirname, './common/parseSVG'));
+const svgToPng = require(path.join(__dirname, './common/svgToPng'));
+const svgSymbol = require('gulp-svg-sprite');
+
+//es6
+const babel = require('gulp-babel');
 
 const Common = require(path.join(__dirname, '../common'));
 
@@ -81,7 +84,8 @@ function dist(projectPath, log, callback) {
             less: path.join(projectPath, './src/css/style-*.less'),
             sass: path.join(projectPath, './src/css/style-*.scss'),
             html: [path.join(projectPath, './src/html/**/*.html'), path.join(projectPath, '!./src/html/_*/**.html')],
-            htmlAll: path.join(projectPath, './src/html/**/*')
+            htmlAll: path.join(projectPath, './src/html/**/*'),
+            svg: path.join(projectPath, './src/svg/**/*.svg')
         },
         tmp: {
             dir: path.join(projectPath, './tmp'),
@@ -93,7 +97,7 @@ function dist(projectPath, log, callback) {
             js: path.join(projectPath, './tmp/js'),
             sprite: path.join(projectPath, './tmp/sprite'),
             spriteAll: path.join(projectPath, './tmp/sprite/**/*'),
-            svg: path.join(projectPath, './tmp/img'),
+            svg: path.join(projectPath, './tmp/svg'),
             symboltemp: path.join(projectPath, './tmp/symboltemp/'),
             symbol: path.join(projectPath, './tmp/symbolsvg')
         },
@@ -101,6 +105,7 @@ function dist(projectPath, log, callback) {
             dir: path.join(projectPath, './dist'),
             css: path.join(projectPath, './dist/css'),
             img: path.join(projectPath, './dist/img'),
+            svg: path.join(projectPath, './dist/svg'),
             html: path.join(projectPath, './dist/html'),
             sprite: path.join(projectPath, './dist/sprite')
         }
@@ -114,8 +119,10 @@ function dist(projectPath, log, callback) {
     }
 
     // 清除 svg 过渡目录
-    function delSVG() {
-        return del([paths.tmp.symboltemp]);
+    function delSVG(cb) {
+        del(paths.tmp.symboltemp, {force: true}).then(function () {
+            cb();
+        })
     }
 
     function condition(file) {
@@ -150,7 +157,7 @@ function dist(projectPath, log, callback) {
                 console.log(error.message);
                 log(error.message);
             })
-            .pipe(lazyImageCSS({imagePath: lazyDir}))
+            .pipe(lazyImageCSS({imagePath: lazyDir, SVGGracefulDegradation:config.SVGGracefulDegradation}))
             .pipe(tmtsprite({margin: 4}))
             .pipe(gulpif(condition, gulp.dest(paths.tmp.sprite), gulp.dest(paths.tmp.css)))
             .on('data', function () {
@@ -165,6 +172,10 @@ function dist(projectPath, log, callback) {
     //自动补全
     function compileAutoprefixer(cb) {
         gulp.src(paths.tmp.cssAll)
+            .pipe(svgInline({
+                maxImageSize: 10*1024*1024,
+                extensions: [/.svg/ig],
+            }))
             .pipe(postcss(postcssOption))
             .pipe(gulp.dest(paths.tmp.css))
             .on('end', function () {
@@ -231,17 +242,33 @@ function dist(projectPath, log, callback) {
             });
     }
 
-    //JS 压缩
-    function uglifyJs(cb) {
-        gulp.src(paths.src.js, {base: paths.src.dir})
+    //编译 JS
+    function compileJs(cb) {
+
+        return gulp.src(paths.src.js)
+            .pipe(babel({
+                presets: ["babel-preset-es2015", "babel-preset-stage-2"].map(require.resolve)
+            }))
             .pipe(uglify())
-            .pipe(gulp.dest(paths.tmp.dir))
+            .pipe(gulp.dest(paths.tmp.js))
             .on('end', function () {
-                console.log('uglifyJs success.');
-                log('uglifyJs success.');
+                console.log('compileJs success.');
+                log('compileJs success.');
                 cb && cb();
             });
     }
+
+    //JS 压缩
+    // function uglifyJs(cb) {
+    //     gulp.src(paths.src.js, {base: paths.src.dir})
+    //         .pipe(uglify())
+    //         .pipe(gulp.dest(paths.tmp.dir))
+    //         .on('end', function () {
+    //             console.log('uglifyJs success.');
+    //             log('uglifyJs success.');
+    //             cb && cb();
+    //         });
+    // }
 
     //html 编译
     function compileHtml(cb) {
@@ -256,6 +283,7 @@ function dist(projectPath, log, callback) {
                     })
                 ))
             )
+            .pipe(parseSVG({devPath:projectPath + '/tmp',SVGGracefulDegradation:config.SVGGracefulDegradation}))
             .pipe(gulp.dest(paths.tmp.html))
             .pipe(useref())
             .pipe(gulp.dest(paths.tmp.html))
@@ -306,6 +334,103 @@ function dist(projectPath, log, callback) {
         del(paths.tmp.dir, {force: true}).then(function (delpath) {
             cb();
         })
+    }
+
+    function miniSVG(cb) {
+        if(config.SVGGracefulDegradation){
+            return gulp.src(paths.src.svg)
+                .pipe(svgmin({
+                    plugins: [{
+                        convertPathData: true
+                    }, {
+                        removeTitle: true
+                    }, {
+                        mergePaths: false
+                    }, {
+                        removeUnknownsAndDefaults: false
+                    }, {
+                        removeDoctype: true
+                    }, {
+                        removeComments: true
+                    }, {
+                        cleanupNumericValues: {
+                            floatPrecision: 2
+                        }
+                    }, {
+                        convertColors: {
+                            names2hex: true,
+                            rgb2hex: true
+                        }
+                    }]
+                }))
+                .pipe(svgToPng())
+                .pipe(gulp.dest(paths.tmp.svg))
+                .on('end', function () {
+                    console.log('miniSVG success.');
+                    log('miniSVG success.');
+                    cb && cb();
+                })
+        }else{
+            return gulp.src(paths.src.svg)
+                .pipe(svgmin({
+                    plugins: [{
+                        convertPathData: true
+                    }, {
+                        removeTitle: true
+                    }, {
+                        mergePaths: false
+                    }, {
+                        removeUnknownsAndDefaults: false
+                    }, {
+                        removeDoctype: true
+                    }, {
+                        removeComments: true
+                    }, {
+                        cleanupNumericValues: {
+                            floatPrecision: 2
+                        }
+                    }, {
+                        convertColors: {
+                            names2hex: true,
+                            rgb2hex: true
+                        }
+                    }]
+                }))
+                .pipe(gulp.dest(paths.tmp.svg))
+                .on('end', function () {
+                    console.log('miniSVG success.');
+                    log('miniSVG success.');
+                    cb && cb();
+                })
+        }
+    }
+
+    function svgSymbols(cb){
+        return gulp.src(paths.tmp.symboltemp + '**/*.svg')
+            .pipe(svgSymbol({
+                mode:{
+                    inline:true,
+                    symbol:true
+                },
+                shape:{
+                    id:{
+                        generator:function(id){
+                            var ids = id.replace(/.svg/ig,'');
+                            return ids;
+                        }
+                    }
+                }
+            }))
+            .pipe(rename(function (path){
+                path.dirname = './';
+                path.basename = 'symbol';
+            }))
+            .pipe(gulp.dest(paths.tmp.symbol))
+            .on('end', function () {
+                console.log('svgSymbols success.');
+                log('svgSymbols success.');
+                cb && cb();
+            })
     }
 
     function findChanged(cb) {
@@ -399,7 +524,10 @@ function dist(projectPath, log, callback) {
                     copyMedia(cb);
                 },
                 function (cb) {
-                    uglifyJs(cb);
+                    compileJs(cb);
+                },
+                function (cb) {
+                    miniSVG(cb);
                 }
             ], function (error) {
                 if (error) {
@@ -412,11 +540,17 @@ function dist(projectPath, log, callback) {
         function (next) {
             compileHtml(next);
         },
+        function(next){
+            svgSymbols(next);
+        },
         function (next) {
             reversion(next);
         },
         function (next) {
             supportWebp(next);
+        },
+        function (next) {
+            delSVG(next);
         },
         function (next) {
             findChanged(next);

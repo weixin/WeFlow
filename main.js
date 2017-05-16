@@ -5,6 +5,7 @@ const app = electron.app;
 const dialog = electron.dialog;
 const ipc = electron.ipcMain;
 const BrowserWindow = electron.BrowserWindow;
+const autoUpdater = electron.autoUpdater;
 const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -45,6 +46,22 @@ function createWindow() {
         mainWindow = null;
     });
 
+    checkUpdate();
+
+}
+
+function checkUpdate(){
+    let updateFeed = '';
+    let appVersion = '1.3.2';
+    autoUpdater.setFeedURL(updateFeed + '?v=' + appVersion);
+
+    autoUpdater.on('checking-for-update', function(){
+        console.log('checking-for-update');
+    });
+
+    autoUpdater.on('update-not-available', function(){
+        console.log('update-not-available');
+    });
 }
 
 

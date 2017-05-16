@@ -6,7 +6,6 @@ const gulp = require('gulp');
 const _ = require('lodash');
 const del = require('del');
 const ftp = require('gulp-ftp');
-const util = require('./lib/util');
 const Common = require(path.join(__dirname, '../common'));
 
 module.exports = function (projectPath, log, callback) {
@@ -22,7 +21,7 @@ module.exports = function (projectPath, log, callback) {
 
     let configFTP = config.ftp;
 
-    if (configFTP.host === '' || configFTP.port === '' || configFTP.user === '') {
+    if (configFTP.host === '' || configFTP.pass === '' || configFTP.user === '') {
         callback('ftp config');
         return;
     }
@@ -43,9 +42,16 @@ module.exports = function (projectPath, log, callback) {
         });
         let distPath = config['ftp']['includeHtml'] ? path.join(projectPath, './dist/**/*') : [path.join(projectPath, './dist/**/*'), path.join(projectPath, '!./dist/html/**/*.html')];
 
+        console.log(ftpConfig)
+        console.log(distPath);
 
-        gulp.src(distPath, {base: '.'})
+        gulp.src(distPath)
             .pipe(ftp(ftpConfig))
+            .on('finish', function(){
+                console.log('sftp success.');
+                log('sftp success.');
+                cb && cb();
+            })
             .on('end', function () {
                 console.log('ftp success.');
                 log('ftp success.');

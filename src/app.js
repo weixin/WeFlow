@@ -145,7 +145,7 @@ function checkForUpdate(action) {
 ipc.on('checkForUpdateReply', function (event, index, status) {
     if (status) {
         if (index === 1) {
-            alert('哈哈哈, 你真的以为我等下会提醒你吗?赶紧去下载最新版本吧！');
+            // alert('哈哈哈, 你真的以为我等下会提醒你吗?赶紧去下载最新版本吧！');
         } else {
             shell.openExternal(Common.DOWNLOADURL);
         }
@@ -649,7 +649,11 @@ function runTask(taskName, context) {
                 $logStatus.text('Done');
                 logReply('dist 编译完成');
                 console.log('dist 编译完成');
-                context.text('生产编译')
+                context.text('生产编译');
+
+                new Notification('提示', {
+                    body: '编译成功'
+                });
             }, 500);
         });
     }
@@ -667,6 +671,10 @@ function runTask(taskName, context) {
                     logReply('打包完成');
                     console.log('打包完成');
                     context.text('打包');
+
+                    new Notification('提示', {
+                        body: '打包成功'
+                    });
                 }, 500);
             });
         });
@@ -708,6 +716,10 @@ function runTask(taskName, context) {
                         logReply('上传完成');
                         console.log('上传完成');
                         context.text('上传');
+
+                        new Notification('提示', {
+                            body: '上传成功'
+                        });
                     }, 500);
                 }
             })
@@ -855,9 +867,9 @@ function updateConfig($this) {
     let cname = nameArr[1];
 
     if (cname) {
-        config[pname][cname] = type === 'text' ? val : checked;
+        config[pname][cname] = (type === 'text' || type === 'password') ? val : checked;
     } else {
-        config[pname] = type === 'text' ? val : checked;
+        config[pname] = (type === 'text' || type === 'password') ? val : checked;
     }
 
     //写入configPath

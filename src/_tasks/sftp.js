@@ -22,7 +22,7 @@ module.exports = function (projectPath, log, callback) {
 
     let configSFTP = config.ftp;
 
-    if (configSFTP.host === '' || configSFTP.port === '' || configSFTP.user === '') {
+    if (configSFTP.host === '' || configSFTP.pass === '' || configSFTP.user === '') {
         callback('sftp config');
         return;
     }
@@ -37,15 +37,19 @@ module.exports = function (projectPath, log, callback) {
     }
 
     function remoteSftp(cb) {
-        let remotePath = config['sftp']['remotePath'] || "";
-        let sftpConfig = _.extend(config['sftp'], {
+        let remotePath = config['ftp']['remotePath'] || "";
+        let sftpConfig = _.extend(config['ftp'], {
             remotePath: path.join(remotePath, projectName)
         });
-        let distPath = config['sftp']['includeHtml'] ? path.join(projectPath, './dist/**/*') : [path.join(projectPath, './dist/**/*'), path.join(projectPath, '!./dist/html/**/*.html')];
+        let distPath = config['ftp']['includeHtml'] ? path.join(projectPath, './dist/**/*') : [path.join(projectPath, './dist/**/*'), path.join(projectPath, '!./dist/html/**/*.html')];
 
-
-        gulp.src(distPath, {base: '.'})
+        gulp.src(distPath)
             .pipe(sftp(sftpConfig))
+            .on('finish', function(){
+                console.log('sftp success.');
+                log('sftp success.');
+                cb && cb();
+            })
             .on('end', function () {
                 console.log('sftp success.');
                 log('sftp success.');
