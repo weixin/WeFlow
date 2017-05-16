@@ -141,7 +141,11 @@ var template = [
                 label: '调试模式',
                 accelerator: 'Option+CmdOrCtrl+I',
                 click: function () {
-                    remote.getCurrentWindow().webContents.toggleDevTools();
+                    if(remote.getCurrentWindow().webContents.isDevToolsOpened()){
+                        remote.getCurrentWindow().webContents.closeDevTools();
+                    }else{
+                        remote.getCurrentWindow().webContents.openDevTools({mode: 'undocked'});
+                    }
                 }
             }
         ]
