@@ -14,13 +14,6 @@
     "pack": "build --target dir",
     "dist": "rimraf dist && build"
   },
-  "build": {
-    "app-bundle-id": "com.weixin.weflow",
-    "app-category-type": "publish.app-category.weflow-design",
-    "win": {
-      "iconUrl": "http://7xojg5.com1.z0.glb.clouddn.com/icon.ico"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/weixin/WeFlow"
@@ -38,7 +31,7 @@
   },
   "homepage": "https://github.com/weixin/WeFlow#readme",
   "devDependencies": {
-    "electron-packag er": "^8.7.0",
+    "electron-packager": "^8.7.0",
     "electron-prebuilt": "^0.37.0",
     "rimraf": "^2.5.2"
   },
