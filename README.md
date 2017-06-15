@@ -1,4 +1,4 @@
-# WeFlow [![Version Number](https://img.shields.io/github/release/Tencent/WeFlow.svg?style=flat)](https://github.com/Tencent/WeFlow/ "Version Number")
+# WeFlow [![Version Number](https://img.shields.io/github/release/weixin/WeFlow.svg?style=flat)](https://github.com/weixin/WeFlow/ "Version Number")
 
 [![Join the chat at https://gitter.im/weixin/tmt-workflow](https://badges.gitter.im/Join%20Chat.svg?style=flat)](https://gitter.im/TmT?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![TmT Name](https://img.shields.io/badge/Team-TmT-brightgreen.svg?style=flat)](https://github.com/orgs/TmT/people "Tencent Moe Team") 
@@ -10,7 +10,7 @@
 
 ## 安装使用
 
-[Github Release 下载](https://github.com/Tencent/WeFlow/releases) 或 [官网高速下载分流](https://weflow.io/#download)  
+[Github Release 下载](https://github.com/weixin/WeFlow/releases) 或 [官网高速下载分流](https://weflow.io/#download)  
 (支持 macOS / Windows / Linux 操作系统)
 
 ## 界面预览
@@ -29,4 +29,4 @@ Sketch 设计稿源文件可在 [Dribbble](https://dribbble.com/hzlzh/projects/3
 
 ## 参与贡献
  
-如果有 `Bug反馈` 或 `功能建议`，请创建 [Issue](https://github.com/Tencent/WeFlow/issues) 或发送 [Pull Request](https://github.com/Tencent/WeFlow/pulls)，感谢你的参与和贡献。
+如果有 `Bug反馈` 或 `功能建议`，请创建 [Issue](https://github.com/weixin/WeFlow/issues) 或发送 [Pull Request](https://github.com/weixin/WeFlow/pulls)，感谢你的参与和贡献。
