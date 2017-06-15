@@ -67,7 +67,7 @@
     "gulp-tmtsprite": "^0.0.22",
     "gulp-uglify": "^1.5.3",
     "gulp-useref": "^3.1.2",
-    "gulp-util": "^3.0.7",
+    "gulp-util": "^3.0.8",
     "gulp-webp": "^2.3.0",
     "gulp-zip": "^3.2.0",
     "imagemin-pngquant": "^4.2.2",
