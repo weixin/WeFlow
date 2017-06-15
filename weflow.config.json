@@ -1,12 +1,12 @@
 {
     "ftp": {
-        "host": "123.207.13.240",
+        "host": "",
         "port": "",
-        "user": "root",
-        "pass": "ztb7bVcBth5R",
+        "user": "",
+        "pass": "",
         "remotePath": "",
-        "includeHtml": true,
-        "ssh": true
+        "includeHtml": false,
+        "ssh": false
     },
     "livereload": true,
     "lazyDir": [

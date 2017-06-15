@@ -624,6 +624,10 @@ input:focus {
     top: 29px;
 }
 
+.sftp input, .ui-checkbox input{
+    opacity: 0;
+}
+
 .ui-text input {
     position: relative;
     z-index: 1;
