@@ -30,6 +30,7 @@ function dev(projectPath, log, callback) {
     }
 
     let lazyDir = config.lazyDir || ['../slice', '../svg'];
+    let outputPath = config.outputPath || '/'
 
     let paths = {
         src: {
@@ -49,7 +50,7 @@ function dev(projectPath, log, callback) {
         dev: {
             dir: path.join(projectPath, './dev'),
             css: path.join(projectPath, './dev/css'),
-            html: path.join(projectPath, './dev/html'),
+            html: path.join(projectPath, `./dev${outputPath}`),
             js: path.join(projectPath, './dev/js'),
             symboltemp: path.join(projectPath, './dev/symboltemp'),
             symbol: path.join(projectPath, './dev/symbolsvg')
@@ -330,7 +331,7 @@ function dev(projectPath, log, callback) {
                 baseDir: paths.dev.dir,
                 directory: true
             },
-            startPath: "/html",
+            startPath: paths.dev.outputPath,
             port: 8080,
             reloadDelay: 0,
             timestamps: true,
@@ -425,5 +426,3 @@ function dev(projectPath, log, callback) {
 }
 
 module.exports = dev;
-
-
