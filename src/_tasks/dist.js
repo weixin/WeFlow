@@ -56,6 +56,7 @@ function dist(projectPath, log, callback) {
     }
 
     let lazyDir = config.lazyDir || ['../slice'];
+    let outputPath = config.outputPath || '/';
 
     let postcssOption = [];
 
@@ -93,7 +94,7 @@ function dist(projectPath, log, callback) {
             css: path.join(projectPath, './tmp/css'),
             cssAll: path.join(projectPath, './tmp/css/style-*.css'),
             img: path.join(projectPath, './tmp/img'),
-            html: path.join(projectPath, './tmp/html'),
+            html: path.join(projectPath, `./tmp${outputPath}`),
             js: path.join(projectPath, './tmp/js'),
             sprite: path.join(projectPath, './tmp/sprite'),
             spriteAll: path.join(projectPath, './tmp/sprite/**/*'),
@@ -106,7 +107,7 @@ function dist(projectPath, log, callback) {
             css: path.join(projectPath, './dist/css'),
             img: path.join(projectPath, './dist/img'),
             svg: path.join(projectPath, './dist/svg'),
-            html: path.join(projectPath, './dist/html'),
+            html: path.join(projectPath, `./dist${outputPath}`),
             sprite: path.join(projectPath, './dist/sprite')
         }
     };
