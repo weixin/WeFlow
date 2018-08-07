@@ -45,4 +45,6 @@ Sketch 设计稿源文件可在 [Dribbble](https://dribbble.com/hzlzh/projects/3
 
 ## 参与贡献
  
-如果有 `Bug反馈` 或 `功能建议`，请创建 [Issue](https://github.com/weixin/WeFlow/issues) 或发送 [Pull Request](https://github.com/weixin/WeFlow/pulls)，感谢你的参与和贡献。
+如果有 `Bug反馈` 或 `功能建议`，请创建 [Issue](https://github.com/weixin/WeFlow/issues) 或发送 [Pull Request](https://github.com/weixin/WeFlow/pulls)
+
+[腾讯开源激励计划](https://opensource.tencent.com/contribution) 鼓励开发者参与贡献，也将给予贡献者相应的激励以表认可和感谢。
