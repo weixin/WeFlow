@@ -38,13 +38,13 @@
 * 增加自动编译
 * 修复一些 bug(不写项目名时无限弹窗、欢迎页时就拖放项目报错等)
 
+## 参与贡献
+ 
+如果你有 `Bug反馈` 或 `功能建议`，请创建 [Issue](https://github.com/weixin/WeFlow/issues) 或发送 [Pull Request](https://github.com/weixin/WeFlow/pulls)，非常感谢。
+
+[腾讯开源激励计划](https://opensource.tencent.com/contribution) 鼓励开发者的参与和贡献，期待你的加入。
+
 ## License
 
 所有代码采用 [MIT License](http://opensource.org/licenses/MIT) 开源，可根据自身团队和项目特点 `fork` 进行定制。  
 Sketch 设计稿源文件可在 [Dribbble](https://dribbble.com/hzlzh/projects/380016-WeFlow) 获取
-
-## 参与贡献
- 
-如果有 `Bug反馈` 或 `功能建议`，请创建 [Issue](https://github.com/weixin/WeFlow/issues) 或发送 [Pull Request](https://github.com/weixin/WeFlow/pulls)
-
-[腾讯开源激励计划](https://opensource.tencent.com/contribution) 鼓励开发者参与贡献，也将给予贡献者相应的激励以表认可和感谢。
