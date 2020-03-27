@@ -1,3 +1,12 @@
+## 项目迁移说明
+
+由于业务调整，本项目不再更新，感谢大家一直以来的支持。  
+后续需求会合并到 [Feflow](https://github.com/Tencent/feflow) 项目进行开发迭代，请移步：
+
+* Github: https://github.com/Tencent/feflow
+* 官网：https://feflowjs.com/
+
+
 # WeFlow [![Version Number](https://img.shields.io/github/release/Tencent/WeFlow.svg?style=flat)](https://github.com/Tencent/WeFlow/ "Version Number")
 
 > 一个基于 [tmt-workflow](https://github.com/weixin/tmt-workflow) 前端工作流的开发工具。 （已支持最新版 Node.js）   
